@@ -3,12 +3,11 @@ import "./floorPlan.css";
 import initialPositions from "../data/initialsPositions.json";
 import updatedPositions from "../data/updatedPositions.json";
 
-// Define zones with fixed sizes and positions
 const zones = {
-  "Zone 1": { cx: 290, cy: 340, r: 100, startAngle: Math.PI, endAngle: 2 * Math.PI, color: "rgba(255, 0, 0, 0.2)" }, // Semicircle for Zone 1 (red)
-  "Zone 2": { cx: 290, cy: 340, r: 250, innerRadius: 150, color: "rgba(0, 0, 255, 0.2)" }, // Full circle (blue) outside Zone 1
-  "Zone 3": { cx: 290, cy: 340, r: 450, innerRadius: 280, color: "rgba(255, 255, 0, 0.2)" }, // Full circle (yellow), positions only on right side
-  "Zone 4": { cx: 290, cy: 340, r: 1000, innerRadius: 800, color: "rgba(0, 255, 0, 0.2)" } // Full circle (green), positions only on right side
+  "Zone 1": { cx: 290, cy: 340, r: 100, startAngle: Math.PI, endAngle: 2 * Math.PI, color: "rgba(255, 0, 0, 0.2)" }, 
+  "Zone 2": { cx: 290, cy: 340, r: 250, innerRadius: 150, color: "rgba(0, 0, 255, 0.2)" }, 
+  "Zone 3": { cx: 290, cy: 340, r: 450, innerRadius: 280, color: "rgba(255, 255, 0, 0.2)" },
+  "Zone 4": { cx: 290, cy: 340, r: 1000, innerRadius: 800, color: "rgba(0, 255, 0, 0.2)" } 
 };
 
 const svgInitialWidth = 1320;
@@ -19,7 +18,7 @@ const FloorPlan = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setPositions(updatedPositions); // Move to updated positions after 5 seconds
+      setPositions(updatedPositions); 
     }, 5000);
     return () => clearTimeout(timer);
   }, []);
@@ -35,22 +34,21 @@ const FloorPlan = () => {
     return { constrainedX, constrainedY };
   };
 
-  // Calculate position within a specific zone with respect to its inner and outer boundaries
   const calculatePositionWithinZone = (zone, isSemiCircle = false, angleLimit = null) => {
     let angle;
     
     if (angleLimit) {
-      // Limit the angle for right-side rectangular positions (Zone 3 & Zone 4)
-      angle = Math.random() * angleLimit; // Restrict angle to first quarter (0 to π/2)
+    
+      angle = Math.random() * angleLimit;
     } else if (isSemiCircle) {
-      angle = zone.startAngle + Math.random() * (zone.endAngle - zone.startAngle); // Random angle in semicircle
+      angle = zone.startAngle + Math.random() * (zone.endAngle - zone.startAngle);
     } else {
-      angle = Math.random() * 2 * Math.PI; // Full circle
+      angle = Math.random() * 2 * Math.PI;
     }
 
     const distance = zone.innerRadius
-      ? zone.innerRadius + Math.random() * (zone.r - zone.innerRadius) // Distance between inner and outer radius
-      : Math.random() * zone.r; // If no innerRadius, use the full zone radius
+      ? zone.innerRadius + Math.random() * (zone.r - zone.innerRadius) 
+      : Math.random() * zone.r; 
 
     let employeeX = zone.cx + distance * Math.cos(angle);
     let employeeY = zone.cy + distance * Math.sin(angle);
@@ -59,27 +57,23 @@ const FloorPlan = () => {
     return { employeeX: constrainedX, employeeY: constrainedY };
   };
 
-  // Custom calculation for Zone 3 and Zone 4 to restrict positions to the right side
   const calculateZone3Position = () => {
-    // Limit to the right quarter (angle between 0 and π/2)
     const { employeeX, employeeY } = calculatePositionWithinZone(zones["Zone 3"], false, Math.PI / 2);
     return { employeeX, employeeY };
   };
 
   const calculateZone4Position = () => {
-    // Limit to the right quarter (angle between 0 and π/2)
     const { employeeX, employeeY } = calculatePositionWithinZone(zones["Zone 4"], false, Math.PI / 2);
     return { employeeX, employeeY };
   };
 
-  // Render circular zones with fixed positions and sizes
   const renderZones = () => {
     return Object.keys(zones).map((zoneName) => {
       const zone = zones[zoneName];
       return (
         <circle
           key={zoneName}
-          cx={zone.cx}  // Keep fixed positions
+          cx={zone.cx}  
           cy={zone.cy}
           r={zone.r}
           fill={zone.color}
@@ -88,7 +82,6 @@ const FloorPlan = () => {
     });
   };
 
-  // Render employees within their respective zones
   const renderEmployees = () => {
     return positions.map((employee) => {
       const zone = zones[employee.zone];
@@ -123,7 +116,7 @@ const FloorPlan = () => {
             r="5"
             fill="black"
             style={{
-              transition: "cx 2s ease-in-out, cy 2s ease-in-out" // Smooth transition for position changes
+              transition: "cx 2s ease-in-out, cy 2s ease-in-out" 
             }}
           />
           {/* Employee first name and last name initially at old position */}
@@ -133,7 +126,7 @@ const FloorPlan = () => {
             fontSize="14"
             fill="black"
             style={{
-              transition: "x 2s ease-in-out, y 2s ease-in-out" // Smooth transition for text positions
+              transition: "x 2s ease-in-out, y 2s ease-in-out" 
             }}
           >
             {employee.firstName}
@@ -144,7 +137,7 @@ const FloorPlan = () => {
             fontSize="14"
             fill="black"
             style={{
-              transition: "x 2s ease-in-out, y 2s ease-in-out" // Smooth transition for text positions
+              transition: "x 2s ease-in-out, y 2s ease-in-out"
             }}
           >
             {employee.lastName}
